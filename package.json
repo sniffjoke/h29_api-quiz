@@ -1,5 +1,5 @@
 {
-  "name": "h28_api-quiz",
+  "name": "h29_api-quiz",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -42,7 +42,6 @@
     "cors-ts": "^1.0.3",
     "cross-env": "^7.0.3",
     "date-fns": "^4.1.0",
-    "ip": "^2.0.1",
     "nestjs-uuid": "^0.1.4",
     "nodemailer": "^6.9.15",
     "passport": "^0.7.0",
