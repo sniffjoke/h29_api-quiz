@@ -1,5 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
 import { PostEntity } from '../../posts/domain/posts.entity';
+import {UserEntity} from "../../users/domain/user.entity";
 
 
 @Entity('blogs')
@@ -23,7 +24,14 @@ export class BlogEntity {
     @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     createdAt: string;
 
+    @Column({nullable: true})
+    userId: string;
+
     @OneToMany(() => PostEntity, (post) => post.blog, { cascade: true })
     posts: PostEntity[]
+
+    @ManyToOne(() => UserEntity, (user) => user.blogs, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'userId' })
+    user: UserEntity;
 
 }

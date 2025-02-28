@@ -3,6 +3,7 @@ import { BlogCreateModel } from '../api/models/input/create-blog.input.model';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { BlogEntity } from '../domain/blogs.entity';
+import {UserEntity} from "../../users/domain/user.entity";
 
 
 @Injectable()
@@ -13,11 +14,14 @@ export class BlogsRepositoryTO {
   ) {
   }
 
-  async createBlog(blogData: BlogCreateModel) {
+  async createBlog(blogData: BlogCreateModel, user?: UserEntity) {
     const blog = new BlogEntity();
     blog.name = blogData.name;
     blog.description = blogData.description;
     blog.websiteUrl = blogData.websiteUrl;
+    if (user) {
+      blog.user = user;
+    }
     const newBlog = await this.bRepository.save(blog);
     return newBlog.id;
   }

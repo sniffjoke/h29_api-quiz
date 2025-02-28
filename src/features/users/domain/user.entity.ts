@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { CommentEntity } from '../../comments/domain/comment.entity';
 import { LikeEntity } from '../../likes/domain/likes.entity';
 import { UserScoreEntity } from '../../quiz/domain/user-score.entity';
+import {BlogEntity} from "../../blogs/domain/blogs.entity";
 
 
 @Entity('users')
@@ -23,12 +24,16 @@ export class UserEntity {
   createdAt: string
 
   @OneToMany(() => CommentEntity, (comment) => comment.user, { cascade: true })
-  comments: Comment[];
+  comments: CommentEntity[];
+  // comments: Comment[];
 
   @OneToMany(() => LikeEntity, (like) => like.user, {onDelete: 'CASCADE'})
   likes: LikeEntity[];
 
   @OneToOne(() => UserScoreEntity, (score) => score.user, {cascade: true})
   score: UserScoreEntity;
+
+  @OneToMany(() => BlogEntity, (blog) => blog.user, { cascade: true })
+  blogs: BlogEntity[];
 
 }

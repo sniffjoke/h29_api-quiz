@@ -1,3 +1,5 @@
+import {CommentatorInfoModel} from "../../../../comments/api/models/output/comment.view.model";
+
 export class BlogViewModel {
     id: string;
     name: string;
@@ -5,4 +7,5 @@ export class BlogViewModel {
     websiteUrl: string;
     createdAt: string;
     isMembership: boolean
+    blogOwnerInfo?: CommentatorInfoModel
 }
