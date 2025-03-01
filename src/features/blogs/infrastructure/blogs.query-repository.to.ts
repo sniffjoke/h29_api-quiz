@@ -75,7 +75,7 @@ export class BlogsQueryRepositoryTO {
 
         if (user) {
             output.blogOwnerInfo = {
-                userId: user.id,
+                userId: user.id.toString(),
                 userLogin: user.login,
             };
         }
