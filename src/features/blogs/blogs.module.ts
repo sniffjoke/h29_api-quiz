@@ -9,11 +9,14 @@ import {PostEntity} from '../posts/domain/posts.entity';
 import {BlogsQueryRepositoryTO} from './infrastructure/blogs.query-repository.to';
 import {BloggersController} from "./api/bloggers.controller";
 import {BlogsSAController} from "./api/blogs.sa.controller";
+import {UsersModule} from "../users/users.module";
+import {TokensService} from "../tokens/application/tokens.service";
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([BlogEntity, PostEntity]),
         PostsModule,
+        UsersModule,
     ],
     controllers: [
         BlogsController,
@@ -23,7 +26,8 @@ import {BlogsSAController} from "./api/blogs.sa.controller";
     providers: [
         BlogsQueryRepositoryTO,
         BlogsRepositoryTO,
-        ...BlogsCommandHandlers
+        ...BlogsCommandHandlers,
+        TokensService
     ],
     exports: [
         BlogsQueryRepositoryTO,

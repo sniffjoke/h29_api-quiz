@@ -14,16 +14,19 @@ export class BlogsQueryRepositoryTO {
     ) {
     }
 
-    async getAllBlogsWithQuery(query: any) {
+    async getAllBlogsWithQuery(query: any, getUsers?: boolean) {
         const generateQuery = await this.generateQuery(query);
-        const items = await this.bRepository
+        const items = this.bRepository
             .createQueryBuilder('b')
             .where('LOWER(b.name) LIKE LOWER(:name)', {name: generateQuery.searchNameTerm.toLowerCase()})
-            .orderBy(`"${generateQuery.sortBy}"`, generateQuery.sortDirection.toUpperCase())
+            .orderBy(`b."${generateQuery.sortBy}"`, generateQuery.sortDirection.toUpperCase())
             .skip((generateQuery.page - 1) * generateQuery.pageSize)
-            .take(generateQuery.pageSize)
-            .getMany()
-        const itemsOutput = items.map(item => this.blogOutputMap(item));
+            .limit(generateQuery.pageSize)
+        if (getUsers) {
+            items.leftJoinAndSelect('b.user', 'user')
+        }
+        const itemsWithQuery = await items.getMany()
+        const itemsOutput = itemsWithQuery.map(item => this.blogOutputMap(item, item.user));
         const resultBlogs = new PaginationBaseModel<BlogViewModel>(generateQuery, itemsOutput);
         return resultBlogs;
     }
@@ -55,13 +58,13 @@ export class BlogsQueryRepositoryTO {
         if (!findedBlog) {
             throw new NotFoundException(`Blog with id ${id} not found`);
         }
+        if (user) return this.blogOutputMap(findedBlog, user)
         return this.blogOutputMap(findedBlog);
     }
 
     blogOutputMap(blog: BlogViewModel, user?: UserEntity) {
-        const { id, name, description, websiteUrl, isMembership, createdAt } = blog;
-
-        const output: typeof blog= {
+        const {id, name, description, websiteUrl, isMembership, createdAt} = blog;
+        const output: typeof blog = {
             id: id.toString(),
             name,
             description,

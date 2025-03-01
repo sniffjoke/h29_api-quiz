@@ -27,6 +27,7 @@ import { BlogsQueryRepositoryTO } from '../infrastructure/blogs.query-repository
 import { PostsQueryRepositoryTO } from '../../posts/infrastructure/posts.query-repository.to';
 import {JwtAuthGuard} from "../../../core/guards/jwt-auth.guard";
 
+
 @Controller('blogger')
 export class BloggersController {
   constructor(
@@ -61,8 +62,8 @@ export class BloggersController {
 
   @Post('blogs')
   @UseGuards(JwtAuthGuard)
-  async createBlog(@Body() dto: BlogCreateModel) {
-    const blogId = await this.commandBus.execute(new CreateBlogCommand(dto));
+  async createBlog(@Body() dto: BlogCreateModel, @Req() req: Request) {
+    const blogId = await this.commandBus.execute(new CreateBlogCommand(dto, req.headers.authorization as string));
     const newBlog = await this.blogsQueryRepository.blogOutput(blogId);
     return newBlog;
   }

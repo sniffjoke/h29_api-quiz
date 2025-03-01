@@ -15,6 +15,7 @@ export class BlogsRepositoryTO {
   }
 
   async createBlog(blogData: BlogCreateModel, user?: UserEntity) {
+    // console.log('user: ', user)
     const blog = new BlogEntity();
     blog.name = blogData.name;
     blog.description = blogData.description;

@@ -40,7 +40,7 @@ export class BlogsSAController {
   @Get('blogs')
   @UseGuards(BasicAuthGuard)
   async getAllBlogs(@Query() query: any) {
-    const blogsWithQuery = await this.blogsQueryRepository.getAllBlogsWithQuery(query);
+    const blogsWithQuery = await this.blogsQueryRepository.getAllBlogsWithQuery(query, true);
     return blogsWithQuery;
   }
 
