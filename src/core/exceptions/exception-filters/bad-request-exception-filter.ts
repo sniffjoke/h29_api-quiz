@@ -9,7 +9,7 @@ export class BadRequestExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     // console.log('error: ', exception.getResponse());
-    console.log('error: ', response)
+    console.log('error: ', response.statusCode)
     const status = exception.getStatus();
     const responseBody: any = exception.getResponse();
     // if  (responseBody.statusCode === 404) {
