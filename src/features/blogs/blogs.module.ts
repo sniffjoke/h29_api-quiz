@@ -10,7 +10,6 @@ import {BlogsQueryRepositoryTO} from './infrastructure/blogs.query-repository.to
 import {BloggersController} from "./api/bloggers.controller";
 import {BlogsSAController} from "./api/blogs.sa.controller";
 import {UsersModule} from "../users/users.module";
-import {TokensService} from "../tokens/application/tokens.service";
 
 @Module({
     imports: [
@@ -27,7 +26,7 @@ import {TokensService} from "../tokens/application/tokens.service";
         BlogsQueryRepositoryTO,
         BlogsRepositoryTO,
         ...BlogsCommandHandlers,
-        TokensService
+        // TokensService
     ],
     exports: [
         BlogsQueryRepositoryTO,

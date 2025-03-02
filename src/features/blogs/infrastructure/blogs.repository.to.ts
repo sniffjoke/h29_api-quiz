@@ -36,6 +36,16 @@ export class BlogsRepositoryTO {
     return findedBlog;
   }
 
+  // async findBlogsByUserId(userId: string) {
+  //   const findedBlogs = await this.bRepository.find({
+  //     where: { userId },
+  //   });
+  //   if (!findedBlogs.length) {
+  //     throw new NotFoundException(`Blogs for user with id ${userId} not found`);
+  //   }
+  //   return findedBlogs;
+  // }
+
   async updateBlogById(id: string, dto: BlogCreateModel) {
     const findedBlog = await this.findBlogById(id)
     if (findedBlog) {

@@ -1,9 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BlogCreateModel } from '../../api/models/input/create-blog.input.model';
 import { BlogsRepositoryTO } from '../../infrastructure/blogs.repository.to';
-import {NotFoundException} from "@nestjs/common";
-import {TokensService} from "../../../tokens/application/tokens.service";
-import {UsersRepositoryTO} from "../../../users/infrastructure/users.repository.to";
+import {UsersService} from "../../../users/application/users.service";
 
 export class CreateBlogCommand {
   constructor(
@@ -19,8 +17,7 @@ export class CreateBlogUseCase
   implements ICommandHandler<CreateBlogCommand> {
   constructor(
     private readonly blogsRepository: BlogsRepositoryTO,
-    private readonly tokensService: TokensService,
-    private readonly usersRepository: UsersRepositoryTO
+    private readonly usersService: UsersService
   ) {
   }
 
@@ -29,9 +26,7 @@ export class CreateBlogUseCase
       return this.blogsRepository.createBlog(command.blogCreateModel);
     }
 
-    const token = this.tokensService.getToken(command.bearerHeader);
-    const decodedToken = this.tokensService.decodeToken(token);
-    const user = await this.usersRepository.findUserById(decodedToken._id);
+    const user = await this.usersService.getUserByAuthToken(command.bearerHeader);
     return this.blogsRepository.createBlog(command.blogCreateModel, user);
   }
 

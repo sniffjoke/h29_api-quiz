@@ -14,7 +14,7 @@ export class BlogsQueryRepositoryTO {
     ) {
     }
 
-    async getAllBlogsWithQuery(query: any, getUsers?: boolean) {
+    async getAllBlogsWithQuery(query: any, getUsers?: boolean, userId?: string) {
         const generateQuery = await this.generateQuery(query);
         const items = this.bRepository
             .createQueryBuilder('b')
@@ -24,6 +24,9 @@ export class BlogsQueryRepositoryTO {
             .limit(generateQuery.pageSize)
         if (getUsers) {
             items.leftJoinAndSelect('b.user', 'user')
+        }
+        if (userId) {
+            items.andWhere('b.userId = :id', { id: userId })
         }
         const itemsWithQuery = await items.getMany()
         const itemsOutput = itemsWithQuery.map(item => this.blogOutputMap(item, item.user));

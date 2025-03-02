@@ -26,6 +26,7 @@ import { CreatePostCommand } from '../../posts/application/useCases/create-post.
 import { BlogsQueryRepositoryTO } from '../infrastructure/blogs.query-repository.to';
 import { PostsQueryRepositoryTO } from '../../posts/infrastructure/posts.query-repository.to';
 import {JwtAuthGuard} from "../../../core/guards/jwt-auth.guard";
+import {UsersService} from "../../users/application/users.service";
 
 
 @Controller('blogger')
@@ -35,6 +36,7 @@ export class BloggersController {
     private readonly blogsQueryRepository: BlogsQueryRepositoryTO,
     private readonly postsService: PostsService,
     private readonly postsQueryRepository: PostsQueryRepositoryTO,
+    private readonly usersService: UsersService,
   ) {
   }
 
@@ -42,8 +44,9 @@ export class BloggersController {
 
   @Get('blogs') //-1
   @UseGuards(JwtAuthGuard)
-  async getAll(@Query() query: any) {
-    const blogsWithQuery = await this.blogsQueryRepository.getAllBlogsWithQuery(query);
+  async getAll(@Query() query: any, @Req() req: Request) {
+    const user = await this.usersService.getUserByAuthToken(req.headers.authorization as string);
+    const blogsWithQuery = await this.blogsQueryRepository.getAllBlogsWithQuery(query, false, user.id);
     return blogsWithQuery;
   }
 
