@@ -74,8 +74,8 @@ export class BloggersController {
   @Put('blogs/:id')
   @HttpCode(204)
   @UseGuards(JwtAuthGuard)
-  async updateBlogById(@Param('id') id: string, @Body() dto: BlogCreateModel) {
-    const updateBlog = await this.commandBus.execute(new UpdateBlogCommand(id, dto));
+  async updateBlogById(@Param('id') id: string, @Body() dto: BlogCreateModel, @Req() req: Request) {
+    const updateBlog = await this.commandBus.execute(new UpdateBlogCommand(id, dto, req.headers.authorization as string));
     return updateBlog;
   }
 
