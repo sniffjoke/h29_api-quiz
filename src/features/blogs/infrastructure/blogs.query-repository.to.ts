@@ -15,7 +15,7 @@ export class BlogsQueryRepositoryTO {
     }
 
     async getAllBlogsWithQuery(query: any, getUsers?: boolean, userId?: string) {
-        const generateQuery = await this.generateQuery(query);
+        const generateQuery = await this.generateQuery(query, getUsers, userId);
         const items = this.bRepository
             .createQueryBuilder('b')
             .where('LOWER(b.name) LIKE LOWER(:name)', {name: generateQuery.searchNameTerm.toLowerCase()})
@@ -34,17 +34,23 @@ export class BlogsQueryRepositoryTO {
         return resultBlogs;
     }
 
-    private async generateQuery(query: any) {
+    private async generateQuery(query: any, getUsers?: boolean, userId?: string) {
         const searchNameTerm: string = query.searchNameTerm ? query.searchNameTerm : '';
-        const totalCount = await this.bRepository
+        const totalCount = this.bRepository
             .createQueryBuilder('b')
             .where('LOWER(b.name) LIKE LOWER(:name)', {name: `%${searchNameTerm.toLowerCase()}%`})
-            .getCount()
+        if (getUsers) {
+            totalCount.leftJoinAndSelect('b.user', 'user')
+        }
+        if (userId) {
+            totalCount.andWhere('b.userId = :id', { id: userId })
+        }
+        const totalCountWithQuery = await totalCount.getCount()
         const pageSize = query.pageSize ? +query.pageSize : 10;
-        const pagesCount = Math.ceil(totalCount / pageSize);
+        const pagesCount = Math.ceil(totalCountWithQuery / pageSize);
 
         return {
-            totalCount,
+            totalCount: totalCountWithQuery,
             pageSize,
             pagesCount,
             page: query.pageNumber ? Number(query.pageNumber) : 1,
