@@ -20,7 +20,7 @@ export class BlogsQueryRepositoryTO {
             .createQueryBuilder('b')
             .where('LOWER(b.name) LIKE LOWER(:name)', {name: generateQuery.searchNameTerm.toLowerCase()})
             .orderBy(`b."${generateQuery.sortBy}"`, generateQuery.sortDirection.toUpperCase())
-            .skip((generateQuery.page - 1) * generateQuery.pageSize)
+            .offset((generateQuery.page - 1) * generateQuery.pageSize)
             .limit(generateQuery.pageSize)
         if (getUsers) {
             items.leftJoinAndSelect('b.user', 'user')
