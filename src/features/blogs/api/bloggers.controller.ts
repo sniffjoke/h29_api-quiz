@@ -82,8 +82,8 @@ export class BloggersController {
   @Delete('blogs/:id')
   @HttpCode(204)
   @UseGuards(JwtAuthGuard)
-  async deleteBlog(@Param('id') id: string) {
-    const deleteBlog = await this.commandBus.execute(new DeleteBlogCommand(id));
+  async deleteBlog(@Param('id') id: string, @Req() req: Request) {
+    const deleteBlog = await this.commandBus.execute(new DeleteBlogCommand(id, req.headers.authorization as string));
     return deleteBlog;
   }
 
