@@ -3,6 +3,7 @@ import { PostCreateModel } from '../../api/models/input/create-post.input.model'
 import { BlogsRepositoryTO } from '../../../blogs/infrastructure/blogs.repository.to';
 import { PostsRepositoryTO } from '../../infrastructure/posts.repository.to';
 import {UsersService} from "../../../users/application/users.service";
+import {UsersCheckHandler} from "../../../users/domain/users.check-handler";
 
 export class CreatePostCommand {
   constructor(
@@ -19,7 +20,8 @@ export class CreatePostUseCase
   constructor(
     private readonly blogsRepository: BlogsRepositoryTO,
     private readonly postsRepository: PostsRepositoryTO,
-    private readonly usersService: UsersService
+    private readonly usersService: UsersService,
+    private readonly usersCheckHandler: UsersCheckHandler
   ) {
   }
 
@@ -29,6 +31,8 @@ export class CreatePostUseCase
       return await this.postsRepository.createPost(command.postCreateModel, findedBlog.name);
     }
     const user = await this.usersService.getUserByAuthToken(command.bearerHeader);
-    return await this.postsRepository.createPost(command.postCreateModel, findedBlog.name, user);
+    if (this.usersCheckHandler.checkIsOwner(Number(findedBlog.userId), Number(user.id))) {
+      return await this.postsRepository.createPost(command.postCreateModel, findedBlog.name, user);
+    }
   }
 }

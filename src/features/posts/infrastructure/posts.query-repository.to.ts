@@ -107,6 +107,7 @@ export class PostsQueryRepositoryTO {
     }
 
     async postOutput(postId: string) {
+        console.log('id: ', postId)
         const findedPost = await this.pRepository
             .createQueryBuilder('p')
             .leftJoin('extendedLikesInfo', 'e', 'e."postId" = p."id"')

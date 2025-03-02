@@ -20,8 +20,8 @@ import { UpdateBlogCommand } from '../application/useCases/update-blog.use-case'
 import { DeleteBlogCommand } from '../application/useCases/delete-blog.use-case';
 import {
   UpdatePostWithBlogInParamsCommand,
-} from '../application/useCases/update-post-from-blogs-in-params.use-case';
-import { DeletePostWithBlogInParamsCommand } from '../application/useCases/delete-post-from-blogs-in-params.use-case';
+} from '../../posts/application/useCases/update-post-from-blogs-in-params.use-case';
+import { DeletePostWithBlogInParamsCommand } from '../../posts/application/useCases/delete-post-from-blogs-in-params.use-case';
 import { CreatePostCommand } from '../../posts/application/useCases/create-post.use-case';
 import { BlogsQueryRepositoryTO } from '../infrastructure/blogs.query-repository.to';
 import { PostsQueryRepositoryTO } from '../../posts/infrastructure/posts.query-repository.to';

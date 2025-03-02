@@ -14,6 +14,7 @@ import { PostEntity } from './domain/posts.entity';
 import { PostsQueryRepositoryTO } from './infrastructure/posts.query-repository.to';
 import { LikeEntity } from '../likes/domain/likes.entity';
 import { BlogEntity } from '../blogs/domain/blogs.entity';
+import {UsersCheckHandler} from "../users/domain/users.check-handler";
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { BlogEntity } from '../blogs/domain/blogs.entity';
     PostsQueryRepositoryTO,
     TokensService,
     PostsService,
-    ...PostsCommandHandlers
+    ...PostsCommandHandlers,
+      UsersCheckHandler
   ],
   exports: [
     forwardRef(() => BlogsModule),
