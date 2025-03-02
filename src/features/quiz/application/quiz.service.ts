@@ -13,66 +13,66 @@ export class QuizService {
   ) {
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
-  async checkFinishTime() {
-    let lastAnswerTime;
-    const currentActiveGames = await this.quizRepository.findAllActiveGames();
-    if (!currentActiveGames.length) {
-      this.logger.setContext('No active games found');
-      this.logger.log('No active games found');
-    }
-    for (let game of currentActiveGames) {
-      if (game.firstPlayerProgress.answers.length === 5) {
-        lastAnswerTime = game.secondPlayerProgress.answers.length
-          ? Date.parse(
-              game.secondPlayerProgress.answers[
-                game.secondPlayerProgress.answers.length - 1
-              ].addedAt,
-            )
-          : Date.parse(
-              game.firstPlayerProgress.answers[
-                game.firstPlayerProgress.answers.length - 1
-              ].addedAt,
-            );
-        if (
-          game.secondPlayerProgress.answers.length < 5 &&
-          Date.parse(
-            new Date(Date.now()).toISOString().slice(0, 19).replace('T', ' '),
-          ) -
-            10000 >
-            lastAnswerTime
-        ) {
-          game = this.calculateScore(game);
-          await this.quizRepository.finishGame(game);
-        }
-      }
-      if (game.secondPlayerProgress.answers.length === 5) {
-        lastAnswerTime = game.firstPlayerProgress.answers.length
-          ? Date.parse(
-              game.firstPlayerProgress.answers[
-                game.firstPlayerProgress.answers.length - 1
-              ].addedAt,
-            )
-          : Date.parse(
-              game.secondPlayerProgress.answers[
-                game.secondPlayerProgress.answers.length - 1
-              ].addedAt,
-            );
-        if (
-          game.firstPlayerProgress.answers.length < 5 &&
-          Date.parse(
-            new Date(Date.now()).toISOString().slice(0, 19).replace('T', ' '),
-          ) -
-            10000 >
-            lastAnswerTime
-        ) {
-          game = this.calculateScore(game);
-          await this.quizRepository.finishGame(game);
-        }
-      }
-      await this.quizRepository.recordStatistic(game);
-    }
-  }
+  // @Cron(CronExpression.EVERY_10_SECONDS)
+  // async checkFinishTime() {
+  //   let lastAnswerTime;
+  //   const currentActiveGames = await this.quizRepository.findAllActiveGames();
+  //   if (!currentActiveGames.length) {
+  //     this.logger.setContext('No active games found');
+  //     this.logger.log('No active games found');
+  //   }
+  //   for (let game of currentActiveGames) {
+  //     if (game.firstPlayerProgress.answers.length === 5) {
+  //       lastAnswerTime = game.secondPlayerProgress.answers.length
+  //         ? Date.parse(
+  //             game.secondPlayerProgress.answers[
+  //               game.secondPlayerProgress.answers.length - 1
+  //             ].addedAt,
+  //           )
+  //         : Date.parse(
+  //             game.firstPlayerProgress.answers[
+  //               game.firstPlayerProgress.answers.length - 1
+  //             ].addedAt,
+  //           );
+  //       if (
+  //         game.secondPlayerProgress.answers.length < 5 &&
+  //         Date.parse(
+  //           new Date(Date.now()).toISOString().slice(0, 19).replace('T', ' '),
+  //         ) -
+  //           10000 >
+  //           lastAnswerTime
+  //       ) {
+  //         game = this.calculateScore(game);
+  //         await this.quizRepository.finishGame(game);
+  //       }
+  //     }
+  //     if (game.secondPlayerProgress.answers.length === 5) {
+  //       lastAnswerTime = game.firstPlayerProgress.answers.length
+  //         ? Date.parse(
+  //             game.firstPlayerProgress.answers[
+  //               game.firstPlayerProgress.answers.length - 1
+  //             ].addedAt,
+  //           )
+  //         : Date.parse(
+  //             game.secondPlayerProgress.answers[
+  //               game.secondPlayerProgress.answers.length - 1
+  //             ].addedAt,
+  //           );
+  //       if (
+  //         game.firstPlayerProgress.answers.length < 5 &&
+  //         Date.parse(
+  //           new Date(Date.now()).toISOString().slice(0, 19).replace('T', ' '),
+  //         ) -
+  //           10000 >
+  //           lastAnswerTime
+  //       ) {
+  //         game = this.calculateScore(game);
+  //         await this.quizRepository.finishGame(game);
+  //       }
+  //     }
+  //     await this.quizRepository.recordStatistic(game);
+  //   }
+  // }
 
   calculateScore(gamePair: GamePairEntity) {
     const hasCorrectAnswerFirstPlayer =
