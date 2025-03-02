@@ -19,12 +19,12 @@ export class TypeOrmConfigService {
             ssl: databaseSettings.SSL_CONNECTION === '1',
             autoLoadEntities: true,
             synchronize: true,
-            // extra: {
-            //     ssl: {
-            //         rejectUnauthorized: false, // Важно для подключения к Heroku Postgres
-            //     },
-            // },
-            extra: databaseSettings.SSL_CONNECTION === '1' ? { ssl: { rejectUnauthorized: false } } : {}
+            extra: {
+                ssl: {
+                    rejectUnauthorized: false, // Важно для подключения к Heroku Postgres
+                },
+            },
+            // extra: databaseSettings.SSL_CONNECTION === '1' ? { ssl: { rejectUnauthorized: false } } : {}
         }
     }
 }
