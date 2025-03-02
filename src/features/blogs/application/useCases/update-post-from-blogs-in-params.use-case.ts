@@ -29,13 +29,14 @@ export class UpdatePostWithBlogInParamsUseCase
 
   async execute(command: UpdatePostWithBlogInParamsCommand) {
     const findedBlog = await this.blogsRepository.findBlogById(command.blogId)
+    const findedPost = await this.postsRepository.findPostById(command.postId)
 
     if (!command.bearerHeader) {
       return await this.postsRepository.updatePostFromBlogsUri(command.postId, command.blogId, command.dto)
     }
 
     const user = await this.usersService.getUserByAuthToken(command.bearerHeader);
-    if (this.usersCheckHandler.checkIsOwner(Number(findedBlog.userId), Number(user.id))) {
+    if (this.usersCheckHandler.checkIsOwner(Number(findedPost.userId), Number(user.id))) {
       return await this.postsRepository.updatePostFromBlogsUri(command.postId, command.blogId, command.dto)
     }
   }
