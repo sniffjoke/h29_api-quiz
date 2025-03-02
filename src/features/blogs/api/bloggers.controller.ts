@@ -42,33 +42,20 @@ export class BloggersController {
 
 // TODO: метод execute pattern (service)
 
-  @Get('blogs') //-1
-  @UseGuards(JwtAuthGuard)
-  async getAll(@Query() query: any, @Req() req: Request) {
-    const user = await this.usersService.getUserByAuthToken(req.headers.authorization as string);
-    const blogsWithQuery = await this.blogsQueryRepository.getAllBlogsWithQuery(query, false, user.id);
-    return blogsWithQuery;
-  }
-
-
-
-  @Get('blogs/:id/posts')
-  @UseGuards(JwtAuthGuard)
-  async getAllPostsByBlogId(@Param('id') id: string, @Query() query: any, @Req() req: Request) {
-    const posts = await this.postsQueryRepository.getAllPostsWithQuery(query, id);
-    const newData = await this.postsService.generatePostsWithLikesDetails(posts.items, req.headers.authorization as string);
-    return {
-      ...posts,
-      items: newData,
-    };
-  }
-
   @Post('blogs')
   @UseGuards(JwtAuthGuard)
   async createBlog(@Body() dto: BlogCreateModel, @Req() req: Request) {
     const blogId = await this.commandBus.execute(new CreateBlogCommand(dto, req.headers.authorization as string));
     const newBlog = await this.blogsQueryRepository.blogOutput(blogId);
     return newBlog;
+  }
+
+  @Get('blogs') //-1
+  @UseGuards(JwtAuthGuard)
+  async getAll(@Query() query: any, @Req() req: Request) {
+    const user = await this.usersService.getUserByAuthToken(req.headers.authorization as string);
+    const blogsWithQuery = await this.blogsQueryRepository.getAllBlogsWithQuery(query, false, user.id);
+    return blogsWithQuery;
   }
 
   @Put('blogs/:id')
@@ -91,7 +78,7 @@ export class BloggersController {
 
   @Get('blogs/:id/posts')
   @UseGuards(JwtAuthGuard)
-  async getAllPostsWithBlogId(@Param('id') id: string, @Query() query: any, @Req() req: Request) {
+  async getAllPostsByBlogId(@Param('id') id: string, @Query() query: any, @Req() req: Request) {
     const posts = await this.postsQueryRepository.getAllPostsWithQuery(query, id);
     const newData = await this.postsService.generatePostsWithLikesDetails(posts.items, req.headers.authorization as string);
     return {
@@ -103,7 +90,7 @@ export class BloggersController {
   @Post('blogs/:id/posts')
   @UseGuards(JwtAuthGuard)
   async createPostWithParams(@Body() dto: PostCreateModelWithParams, @Param('id') blogId: string, @Req() req: Request) {
-    const postId = await this.commandBus.execute(new CreatePostCommand({ ...dto, blogId }));
+    const postId = await this.commandBus.execute(new CreatePostCommand({ ...dto, blogId }, req.headers.authorization as string));
     const newPost = await this.postsQueryRepository.postOutput(postId);
     const postWithDetails = await this.postsService.generateOnePostWithLikesDetails(newPost, req.headers.authorization as string);
     return postWithDetails;
@@ -112,16 +99,16 @@ export class BloggersController {
   @Put('blogs/:blogId/posts/:postId')
   @HttpCode(204)
   @UseGuards(JwtAuthGuard)
-  async updatePost(@Body() dto: PostCreateModelWithParams, @Param() idParams: any) {
-    const updatePost = await this.commandBus.execute(new UpdatePostWithBlogInParamsCommand(idParams.postId, idParams.blogId, dto));
+  async updatePost(@Body() dto: PostCreateModelWithParams, @Param() idParams: any, @Req() req: Request) {
+    const updatePost = await this.commandBus.execute(new UpdatePostWithBlogInParamsCommand(idParams.postId, idParams.blogId, dto, req.headers.authorization as string));
     return updatePost;
   }
 
   @Delete('blogs/:blogId/posts/:postId')
   @HttpCode(204)
   @UseGuards(JwtAuthGuard)
-  async deletePost(@Param() idParams: any) {
-    const deletePost = await this.commandBus.execute(new DeletePostWithBlogInParamsCommand(idParams.postId, idParams.blogId));
+  async deletePost(@Param() idParams: any, @Req() req: Request) {
+    const deletePost = await this.commandBus.execute(new DeletePostWithBlogInParamsCommand(idParams.postId, idParams.blogId, req.headers.authorization as string));
     return deletePost;
   }
 
@@ -132,4 +119,15 @@ export class BloggersController {
 // async getBlogById(@Param('id') id: string) {
 //   const blog = await this.blogsQueryRepository.blogOutput(id);
 //   return blog;
+// }
+
+// @Get('blogs/:id/posts')
+// @UseGuards(JwtAuthGuard)
+// async getAllPostsWithBlogId(@Param('id') id: string, @Query() query: any, @Req() req: Request) {
+//   const posts = await this.postsQueryRepository.getAllPostsWithQuery(query, id);
+//   const newData = await this.postsService.generatePostsWithLikesDetails(posts.items, req.headers.authorization as string);
+//   return {
+//     ...posts,
+//     items: newData,
+//   };
 // }

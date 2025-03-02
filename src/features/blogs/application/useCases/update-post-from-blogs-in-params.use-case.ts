@@ -2,12 +2,15 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostCreateModelWithParams } from '../../../posts/api/models/input/create-post.input.model';
 import { BlogsRepositoryTO } from '../../infrastructure/blogs.repository.to';
 import { PostsRepositoryTO } from '../../../posts/infrastructure/posts.repository.to';
+import {UsersService} from "../../../users/application/users.service";
+import {UsersCheckHandler} from "../../../users/domain/users.check-handler";
 
 export class UpdatePostWithBlogInParamsCommand {
   constructor(
     public postId: string,
     public blogId: string,
-    public dto: PostCreateModelWithParams
+    public dto: PostCreateModelWithParams,
+    public bearerHeader?: string
   ) {
   }
 
@@ -18,13 +21,22 @@ export class UpdatePostWithBlogInParamsUseCase
   implements ICommandHandler<UpdatePostWithBlogInParamsCommand> {
   constructor(
     private readonly blogsRepository: BlogsRepositoryTO,
-    private readonly postsRepository: PostsRepositoryTO
+    private readonly postsRepository: PostsRepositoryTO,
+    private readonly usersService: UsersService,
+    private readonly usersCheckHandler: UsersCheckHandler
   ) {
   }
 
   async execute(command: UpdatePostWithBlogInParamsCommand) {
     const findedBlog = await this.blogsRepository.findBlogById(command.blogId)
-    const updatePost = await this.postsRepository.updatePostFromBlogsUri(command.postId, command.blogId, command.dto)
-    return updatePost
+
+    if (!command.bearerHeader) {
+      return await this.postsRepository.updatePostFromBlogsUri(command.postId, command.blogId, command.dto)
+    }
+
+    const user = await this.usersService.getUserByAuthToken(command.bearerHeader);
+    if (this.usersCheckHandler.checkIsOwner(Number(findedBlog.userId), Number(user.id))) {
+      return await this.postsRepository.updatePostFromBlogsUri(command.postId, command.blogId, command.dto)
+    }
   }
 }

@@ -25,17 +25,6 @@ export class UpdateBlogUseCase
     }
 
     async execute(command: UpdateBlogCommand) {
-        // const blog = await this.blogsRepository.findBlogById(command.id)
-        // if (!command.bearerHeader) {
-        //     const updateBlog = await this.blogsRepository.updateBlogById(blog.id, command.dto)
-        //     return updateBlog
-        // }
-        // const user = await this.usersService.getUserByAuthToken(command.bearerHeader);
-        // const isOwner = this.usersCheckHandler.checkIsOwner(Number(blog.userId), Number(user.id));
-        // if (isOwner) {
-        //     const updateBlog = await this.blogsRepository.updateBlogById(blog.id, command.dto)
-        //     return updateBlog
-        // }
         const blog = await this.blogsRepository.findBlogById(command.id);
 
         if (!command.bearerHeader) {

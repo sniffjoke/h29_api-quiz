@@ -3,6 +3,7 @@ import { CommentEntity } from '../../comments/domain/comment.entity';
 import { LikeEntity } from '../../likes/domain/likes.entity';
 import { UserScoreEntity } from '../../quiz/domain/user-score.entity';
 import {BlogEntity} from "../../blogs/domain/blogs.entity";
+import {PostEntity} from "../../posts/domain/posts.entity";
 
 
 @Entity('users')
@@ -35,5 +36,8 @@ export class UserEntity {
 
   @OneToMany(() => BlogEntity, (blog) => blog.user, { cascade: true })
   blogs: BlogEntity[];
+
+  @OneToMany(() => PostEntity, (post) => post.user, { cascade: true })
+  posts: PostEntity[];
 
 }

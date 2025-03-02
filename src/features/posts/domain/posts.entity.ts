@@ -3,6 +3,7 @@ import { BlogEntity } from '../../blogs/domain/blogs.entity';
 import { CommentEntity } from '../../comments/domain/comment.entity';
 import { LikeEntity } from '../../likes/domain/likes.entity';
 import { ExtendedLikesInfoEntity } from './extended-likes-info.entity';
+import {UserEntity} from "../../users/domain/user.entity";
 
 
 @Entity('posts')
@@ -29,6 +30,9 @@ export class PostEntity {
     @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     createdAt: string;
 
+    @Column({nullable: true})
+    userId: string;
+
     @ManyToOne(() => BlogEntity, (blog) => blog.posts, {onDelete: 'CASCADE'})
     @JoinColumn({ name: 'blogId' })
     blog: BlogEntity;
@@ -41,4 +45,8 @@ export class PostEntity {
 
     @OneToOne(() => ExtendedLikesInfoEntity, (likeInfo) => likeInfo.post, {cascade: true})
     extendedLikesInfo: ExtendedLikesInfoEntity;
+
+    @ManyToOne(() => UserEntity, (user) => user.posts, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'userId' })
+    user: UserEntity;
 }
